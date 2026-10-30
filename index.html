@@ -72,11 +72,34 @@ const result=document.getElementById('result');
 if(!result.value){alert('Copy လုပ်ရန် စာသားမရှိပါ');return;}
 navigator.clipboard.writeText(result.value).then(()=>alert('Copy လုပ်ပြီးပါပြီ'));
 }
-function extract(){
-const url=document.getElementById('videoUrl').value.trim();
-if(!url){alert('Video Link ထည့်ပေးပါ');return;}
-document.getElementById('status').innerText=
-'Backend Server ချိတ်ဆက်ရန် လိုအပ်နေပါသေးသည်။ နောက်တစ်ဆင့်တွင် တည်ဆောက်ပေးပါမည်။';
+async function extract(){
+  const url=document.getElementById('videoUrl').value.trim();
+  const status=document.getElementById('status');
+
+  if(!url){
+    status.innerText='Video Link ထည့်ပေးပါ';
+    return;
+  }
+
+  status.innerText='စာသားထုတ်ယူနေပါတယ်... ခဏစောင့်ပါ။';
+
+  try{
+    const response=await fetch('https://ko-lat-ai-tools.onrender.com/api/extract',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({url:url})
+    });
+
+    const data=await response.json();
+
+    if(!response.ok){
+      throw new Error(data.error || 'စာသားထုတ်ယူမရပါ။');
+    }
+
+    status.innerText=data.transcript;
+  }catch(error){
+    status.innerText=error.message || 'Server ချိတ်ဆက်မှု မအောင်မြင်ပါ။';
+  }
 }
 </script>
 </body>
