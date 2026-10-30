@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ko Lat AI Tools</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101827;color:white;font-family:Arial,sans-serif;padding:20px}
+header{text-align:center;padding:25px 5px}
+h1{color:#38bdf8;font-size:27px}
+p{color:#cbd5e1}
+.card{background:#1e293b;padding:20px;border-radius:15px;margin:15px 0}
+label{display:block;margin:12px 0;color:#7dd3fc}
+input,textarea,select{width:100%;padding:14px;border:1px solid #475569;border-radius:9px;background:#0f172a;color:white;font-size:15px}
+textarea{min-height:150px;resize:vertical}
+button{width:100%;padding:14px;border:0;border-radius:9px;background:#0284c7;color:white;font-size:16px;font-weight:bold;margin-top:12px}
+button:active{background:#0369a1}
+.result{white-space:pre-wrap;line-height:1.7;overflow-wrap:anywhere}
+footer{text-align:center;color:#94a3b8;padding:25px;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+<h1>Ko Lat AI Tools</h1>
+<p>YouTube • TikTok • Facebook</p>
+<p>ဗီဒီယိုစာသားထုတ်ယူခြင်းနှင့် မြန်မာဘာသာပြန်ခြင်း</p>
+</header>
+
+<div class="card">
+<h3>🎬 Video Transcript</h3>
+<label>ဗီဒီယို Link ထည့်ပါ</label>
+<input id="videoUrl" placeholder="YouTube / TikTok / Facebook URL">
+<button onclick="extract()">စာသားထုတ်ယူမည်</button>
+<p id="status"></p>
+</div>
+
+<div class="card">
+<h3>🌐 Myanmar Translator</h3>
+<label>ဘာသာပြန်လိုသော စာသား</label>
+<textarea id="source" placeholder="English သို့မဟုတ် အခြားစာသားများ ထည့်ပါ"></textarea>
+<label>ဘာသာပြန်မည့် ဘာသာစကား</label>
+<select id="language">
+<option value="my">မြန်မာဘာသာ</option>
+<option value="en">English</option>
+</select>
+<button onclick="translateText()">ဘာသာပြန်မည်</button>
+<label>ဘာသာပြန်ရလဒ်</label>
+<textarea id="result" placeholder="ဘာသာပြန်ရလဒ် ဒီမှာပေါ်ပါမည်"></textarea>
+<button onclick="copyText()">📋 Copy စာသား</button>
+</div>
+
+<footer>© 2026 Ko Lat AI Tools</footer>
+
+<script>
+async function translateText(){
+const text=document.getElementById('source').value.trim();
+const lang=document.getElementById('language').value;
+const result=document.getElementById('result');
+if(!text){alert('ဘာသာပြန်မည့်စာသား ထည့်ပါ');return;}
+result.value='ဘာသာပြန်နေပါသည်...';
+try{
+const url='https://api.mymemory.translated.net/get?q='+encodeURIComponent(text)+'&langpair='+(lang==='my'?'en|my':'my|en');
+const response=await fetch(url);
+const data=await response.json();
+result.value=data.responseData.translatedText||'ဘာသာပြန်မရပါ';
+}catch(e){result.value='အင်တာနက်လိုင်း ပြန်စစ်ပေးပါ';}
+}
+function copyText(){
+const result=document.getElementById('result');
+if(!result.value){alert('Copy လုပ်ရန် စာသားမရှိပါ');return;}
+navigator.clipboard.writeText(result.value).then(()=>alert('Copy လုပ်ပြီးပါပြီ'));
+}
+function extract(){
+const url=document.getElementById('videoUrl').value.trim();
+if(!url){alert('Video Link ထည့်ပေးပါ');return;}
+document.getElementById('status').innerText=
+'Backend Server ချိတ်ဆက်ရန် လိုအပ်နေပါသေးသည်။ နောက်တစ်ဆင့်တွင် တည်ဆောက်ပေးပါမည်။';
+}
+</script>
+</body>
+</html>
